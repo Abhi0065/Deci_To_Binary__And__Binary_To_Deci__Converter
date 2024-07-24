@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Decimal to Binary Converter</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+          sans-serif;
+      }
+
+      body {
+        width: 100%;
+        height: 100%;
+        background-color: #212121;
+        overflow: hidden;
+      }
+
+      .main {
+        width: 80%;
+        height: 100%;
+        margin: 5rem auto;
+        color: #fff;
+      }
+
+      .spin {
+        animation: spin 1.3s ease;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotateY(0);
+        }
+        100% {
+          transform: rotateY(360deg);
+        }
+      }
+
+      #con2 {
+        display: none;
+      }
+
+      h2 {
+        color: #fff;
+        font-size: 26px;
+        text-align: center;
+        margin: 2rem 0;
+        user-select: none;
+      }
+
+      .input {
+        width: 100%;
+        height: 45px;
+        border: none;
+        outline: none;
+        border-radius: 5px;
+        font-size: 19px;
+        padding: 20px;
+        text-align: center;
+      }
+
+      input[type="number"] {
+        -moz-appearance: textfield;
+        appearance: textfield;
+      }
+
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        appearance: none;
+      }
+
+      .result {
+        width: fit-content;
+        height: 50px;
+        line-height: 46px;
+        color: #f10962;
+        font-size: 29px;
+        margin: 3rem auto;
+        border-radius: 10px;
+        padding: 0 15px;
+      }
+
+      #button {
+        width: 150px;
+        height: 45px;
+        line-height: 42px;
+        font-size: 19px;
+        border: none;
+        outline: none;
+        border-radius: 10px;
+        margin: 2rem 50%;
+        transform: translateX(-50%);
+        cursor: pointer;
+        color: #fff;
+        background-color: #2594fc;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+        user-select: none;
+      }
+
+      #button:hover {
+        background-color: #1773ca;
+      }
+
+      footer {
+        position: absolute;
+        bottom: 0;
+        background-color: #f5f5f5;
+        width: 100%;
+        height: 15px;
+        line-height: 15px;
+        text-align: center;
+        user-select: none;
+      }
+
+      footer p {
+        color: #353535;
+        font-size: 10px;
+        font-weight: bold;
+        letter-spacing: 0.02rem;
+      }
+    </style>
+  </head>
+  <body></body>
+    <div class="main" id="con">
+      <h2>Decimal To Binary Converter</h2>
+      <input
+        type="number"
+        class="input"
+        id="input"
+        placeholder="Enter Any Number"
+        autocomplete="on"
+        autofocus
+      />
+      <div class="result" id="result"></div>
+    </div>
+    <div class="main" id="con2">
+      <h2>Binary To Decimal Converter</h2>
+      <input
+        type="number"
+        class="input"
+        id="input2"
+        placeholder="Enter Any Number"
+        autocomplete="on"
+        autofocus
+      />
+      <div class="result" id="result2"></div>
+    </div>
+    <button id="button">Switch</button>
+    <footer>
+      <p>A Project By Abhishek</p>
+    </footer>
+    <script>
+      const content = document.getElementById("con");
+      const content2 = document.getElementById("con2");
+      const input = document.getElementById("input");
+      const result = document.getElementById("result");
+      const input2 = document.getElementById("input2");
+      const result2 = document.getElementById("result2");
+      const button = document.getElementById("button");
+
+      input.addEventListener("input", () => {
+        const value = parseInt(input.value);
+        let n = new Number(value);
+        if (n > 10000000) {
+          alert("Allowed numbers between 0 to 100000");
+          input.value = input.value.toString().slice(0, -1);
+          return;
+        }
+
+        let bin = [];
+        let deci = 0;
+        if (input.value.length > 0) {
+          result.style.backgroundColor = "#f0f0f0";
+
+          if (n == 0) {
+            bin.push(0);
+          } else {
+            while (n > 0) {
+              let rem = n % 2;
+              if (rem == 0) {
+                bin.push(`<span style="color:#0053ec;">${rem}</span>`);
+              } else {
+                bin.push(`<span style="color:#f10962;">${rem}</span>`);
+              }
+              n = Math.floor(n / 2);
+            }
+          }
+
+          const extractBinary = bin.reverse().join("");
+          result.innerHTML = extractBinary;
+          let nums = parseInt(input.value).toString().split("");
+          let length = nums.length - 1;
+          let binNum = 0;
+
+          for (let i = length; i >= 0; i--) {
+            binNum += parseInt(nums[length - i]) * Math.pow(2, i);
+          }
+        } else {
+          result.innerText = "";
+          result.style.backgroundColor = "";
+        }
+      });
+
+      input2.addEventListener("input", () => {
+        if (input2.value.length > 0) {
+          result2.style.backgroundColor = "#f0f0f0";
+          let nums = parseInt(input2.value)
+            .toString()
+            .split("")
+            .filter((e) => e >= 0 && e <= 1);
+          input2.value = nums.join("");
+          let length = nums.length - 1;
+          let binNum = 0;
+
+          for (let i = length; i >= 0; i--) {
+            binNum += parseInt(nums[length - i]) * Math.pow(2, i);
+          }
+          result2.innerText = binNum;
+        } else {
+          result2.innerText = "";
+          result2.style.backgroundColor = "";
+        }
+      });
+
+      let flag = 0;
+      button.addEventListener("click", () => {
+        button.animate([{ opacity: 0 }, { opacity: 1 }], {
+          duration: 1000,
+        });
+        flag++;
+
+        if (flag == 1) {
+          content2.animate([{ opacity: 0 }, { opacity: 1 }], {
+            duration: 1500,
+          });
+          content2.classList.add("spin");
+          content2.style.display = "block";
+          content.style.display = "none";
+        } else {
+          content.classList.add("spin");
+          content.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 1500 });
+          content.style.display = "block";
+          content2.style.display = "none";
+          flag = 0;
+        }
+      });
+    </script>
+  </body>
+</html>
