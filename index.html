@@ -130,7 +130,7 @@
       }
     </style>
   </head>
-  <body></body>
+  <body>
     <div class="main" id="con">
       <h2>Decimal To Binary Converter</h2>
       <input
@@ -139,7 +139,6 @@
         id="input"
         placeholder="Enter Any Number"
         autocomplete="on"
-        autofocus
       />
       <div class="result" id="result"></div>
     </div>
@@ -151,7 +150,6 @@
         id="input2"
         placeholder="Enter Any Number"
         autocomplete="on"
-        autofocus
       />
       <div class="result" id="result2"></div>
     </div>
@@ -168,72 +166,91 @@
       const result2 = document.getElementById("result2");
       const button = document.getElementById("button");
 
-      input.addEventListener("input", () => {
-        const value = parseInt(input.value);
-        let n = new Number(value);
-        if (n > 10000000) {
-          alert("Allowed numbers between 0 to 100000");
-          input.value = input.value.toString().slice(0, -1);
-          return;
-        }
+      function speakText(value) {
+        const text = value;
+        console.log(text);
+        const ultra = new SpeechSynthesisUtterance(text)
+        speechSynthesis.speak(ultra);
+      }
 
-        let bin = [];
-        let deci = 0;
-        if (input.value.length > 0) {
-          result.style.backgroundColor = "#f0f0f0";
+      //----------------  DECIMAL TO BINARY ----------------//
 
+      function extractBinary(n) {
+        let binArray = [];
           if (n == 0) {
-            bin.push(0);
+            binArray.push(0);
           } else {
             while (n > 0) {
               let rem = n % 2;
               if (rem == 0) {
-                bin.push(`<span style="color:#0053ec;">${rem}</span>`);
+                binArray.push(`<span style="color:#0053ec;">${rem}</span>`);
               } else {
-                bin.push(`<span style="color:#f10962;">${rem}</span>`);
+                binArray.push(`<span style="color:#f10962;">${rem}</span>`);
               }
               n = Math.floor(n / 2);
             }
           }
+          return binArray.reverse().join("");
+      }
 
-          const extractBinary = bin.reverse().join("");
-          result.innerHTML = extractBinary;
-          let nums = parseInt(input.value).toString().split("");
-          let length = nums.length - 1;
-          let binNum = 0;
+      function decimalToBinary(e) {
+        const value = input.value; 
+        const nums = parseInt(Number(value));
+        input.value = value;
+        if (nums > 10000000) {
+          alert("Allowed numbers between 0 to 100000");
+          input.value = value.toString().slice(0, -1);
+          return;
+        }
 
-          for (let i = length; i >= 0; i--) {
-            binNum += parseInt(nums[length - i]) * Math.pow(2, i);
-          }
+        if (value.length > 0) {
+          result.style.backgroundColor = "#f0f0f0";
+          result.innerHTML = extractBinary(nums);
         } else {
           result.innerText = "";
           result.style.backgroundColor = "";
         }
-      });
+      }
 
-      input2.addEventListener("input", () => {
-        if (input2.value.length > 0) {
-          result2.style.backgroundColor = "#f0f0f0";
-          let nums = parseInt(input2.value)
+      input.addEventListener("input", decimalToBinary);
+
+      //---------------- BINARY TO DECIMAL ----------------//
+
+      function extractDecimal(nums) {
+          let length = nums.length - 1;
+          let deciNum = 0;
+
+          for (let i = length; i >= 0; i--) {
+            deciNum += parseInt(nums[length - i]) * Math.pow(2, i);
+          }
+
+          return deciNum;
+      }
+
+      function binaryToDecimal() {
+        const value = input2.value;
+        let nums = parseInt(value)
             .toString()
             .split("")
             .filter((e) => e >= 0 && e <= 1);
           input2.value = nums.join("");
-          let length = nums.length - 1;
-          let binNum = 0;
 
-          for (let i = length; i >= 0; i--) {
-            binNum += parseInt(nums[length - i]) * Math.pow(2, i);
+        if (value.length > 0) {
+          if(nums.length !== 0){
+            result2.style.backgroundColor = "#f0f0f0";
+            result2.innerText = extractDecimal(nums);
           }
-          result2.innerText = binNum;
         } else {
           result2.innerText = "";
           result2.style.backgroundColor = "";
         }
-      });
+      }
+
+      input2.addEventListener("input", binaryToDecimal);
 
       let flag = 0;
-      button.addEventListener("click", () => {
+
+      function buttonEventSwitch() {
         button.animate([{ opacity: 0 }, { opacity: 1 }], {
           duration: 1000,
         });
@@ -243,17 +260,35 @@
           content2.animate([{ opacity: 0 }, { opacity: 1 }], {
             duration: 1500,
           });
+          localStorage.setItem("content2", "block");
+          localStorage.setItem("content", "none");
           content2.classList.add("spin");
           content2.style.display = "block";
           content.style.display = "none";
         } else {
+          localStorage.setItem("content", "block");
+          localStorage.setItem("content2", "none");
           content.classList.add("spin");
           content.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 1500 });
           content.style.display = "block";
           content2.style.display = "none";
           flag = 0;
         }
-      });
+      }
+
+      button.addEventListener("click", buttonEventSwitch);
+
+      const displayContent = localStorage.getItem("content");
+      const displayContent2 = localStorage.getItem("content2");
+
+      if(displayContent2 == "block"){
+        content2.style.display = displayContent2;
+        content.style.display = displayContent;
+        flag = 1;
+      }else{
+        content.style.display = displayContent;
+        content2.style.display = displayContent2;
+      }
     </script>
   </body>
 </html>
